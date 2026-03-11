@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gratitude.app.mapper.DiaryMapper">
+
+    <!-- 广场分页查询 -->
+    <select id="selectSquarePage" resultType="com.gratitude.app.entity.Diary">
+        SELECT d.*
+        FROM t_diary d
+        WHERE d.deleted = 0
+          AND d.status = 2
+          AND d.visible = 1
+        <if test="keyword != null and keyword != ''">
+            AND (d.title LIKE CONCAT('%', #{keyword}, '%')
+                 OR d.content LIKE CONCAT('%', #{keyword}, '%'))
+        </if>
+        <choose>
+            <when test="sortType == 2">
+                ORDER BY d.like_count DESC, d.create_time DESC
+            </when>
+            <when test="sortType == 3">
+                ORDER BY d.comment_count DESC, d.create_time DESC
+            </when>
+            <otherwise>
+                ORDER BY d.create_time DESC
+            </otherwise>
+        </choose>
+    </select>
+
+</mapper>

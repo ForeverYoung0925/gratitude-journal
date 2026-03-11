@@ -1,0 +1,95 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: gratitude-app
+  profiles:
+    active: dev
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${MYSQL_HOST:127.0.0.1}:${MYSQL_PORT:3306}/gratitude_journal?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:root}
+  redis:
+    host: ${REDIS_HOST:127.0.0.1}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:}
+    database: 0
+    lettuce:
+      pool:
+        max-active: 10
+        max-idle: 8
+        min-idle: 2
+
+# MyBatis-Plus
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*Mapper.xml
+  type-aliases-package: com.gratitude.app.entity
+  global-config:
+    db-config:
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+      id-type: assign_id
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+# Sa-Token
+sa-token:
+  token-name: Authorization
+  timeout: 2592000        # Token有效期 30天
+  active-timeout: 604800  # 活跃有效期 7天(移动端续签)
+  is-concurrent: true
+  is-share: true
+  token-style: uuid
+  is-log: false
+
+# 微信小程序配置
+wx:
+  miniapp:
+    app-id: ${WX_APP_ID:your_app_id}
+    app-secret: ${WX_APP_SECRET:your_app_secret}
+  pay:
+    app-id: ${WX_APP_ID:your_app_id}
+    mch-id: ${WX_MCH_ID:your_mch_id}
+    mch-key: ${WX_MCH_KEY:your_mch_key}
+    notify-url: ${WX_PAY_NOTIFY_URL:https://yourdomain.com/api/pay/notify}
+    # 微信支付V3 配置
+    api-v3-key: ${WX_PAY_API_V3_KEY:your_api_v3_key}
+    serial-no: ${WX_PAY_SERIAL_NO:your_serial_no}
+    private-key-path: ${WX_PAY_PRIVATE_KEY_PATH:classpath:certs/apiclient_key.pem}
+
+# 阿里云 OSS
+oss:
+  endpoint: ${OSS_ENDPOINT:oss-cn-hangzhou.aliyuncs.com}
+  access-key-id: ${OSS_ACCESS_KEY_ID:your_key_id}
+  access-key-secret: ${OSS_ACCESS_KEY_SECRET:your_key_secret}
+  bucket-name: ${OSS_BUCKET_NAME:gratitude-journal}
+  domain: ${OSS_DOMAIN:https://gratitude-journal.oss-cn-hangzhou.aliyuncs.com}
+  # 直传签名过期时间(秒)
+  sts-expire: 900
+
+# XXL-Job
+xxl:
+  job:
+    admin:
+      addresses: ${XXL_JOB_ADMIN:http://127.0.0.1:8081/xxl-job-admin}
+    executor:
+      app-name: gratitude-app
+      port: 9999
+      log-path: /data/logs/xxl-job
+      log-retention-days: 30
+
+# Knife4j
+knife4j:
+  enable: true
+  setting:
+    language: zh-hans
+
+logging:
+  level:
+    com.gratitude: debug
